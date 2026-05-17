@@ -6,6 +6,10 @@ Inspired by [`rails-mermaid_erd`](https://github.com/koedame/rails-mermaid_erd) 
 
 The frontend is plain Hotwire (Stimulus) — **no Vue**, no build step, no asset pipeline required in the host app.
 
+![Rails Realtime ERD](docs/rails-realtime-erd.gif)
+
+---
+
 ## Features
 
 - Mounts `/rails/erd` automatically in `development` and `test` environments
