@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= @app_name %> - Rails Realtime ERD</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <%= csrf_meta_tags %>
+  <%= inline_stylesheet "app/assets/stylesheets/rails_realtime_erd/erd.css" %>
+</head>
+<body>
+  <%= yield %>
+
+  <script src="<%= engine_asset_path("stimulus.js") %>"></script>
+  <script src="<%= engine_asset_path("mermaid.js") %>"></script>
+  <script src="<%= engine_asset_path("application.js") %>"></script>
+</body>
+</html>

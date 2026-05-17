@@ -1,0 +1,1 @@
+Rails.application.config.secret_key_base = "rails_realtime_erd_test_secret_key_base_padding_padding_padding_padding"

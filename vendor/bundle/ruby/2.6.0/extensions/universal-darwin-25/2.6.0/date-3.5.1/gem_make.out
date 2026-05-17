@@ -1,0 +1,23 @@
+current directory: /Users/jacksonpires/Projects/mermaid/rails_realtime_erd/vendor/bundle/ruby/2.6.0/gems/date-3.5.1/ext/date
+/System/Library/Frameworks/Ruby.framework/Versions/2.6/usr/bin/ruby -I /System/Library/Frameworks/Ruby.framework/Versions/2.6/usr/lib/ruby/2.6.0 -r ./siteconf20260516-66620-uscr6s.rb extconf.rb
+checking for whether -Wno-compound-token-split-by-macro is accepted as CFLAGS... yes
+checking for rb_category_warn()... no
+checking for timezone in time.h... yes
+checking for altzone in time.h... no
+creating Makefile
+
+current directory: /Users/jacksonpires/Projects/mermaid/rails_realtime_erd/vendor/bundle/ruby/2.6.0/gems/date-3.5.1/ext/date
+make "DESTDIR=" clean
+
+current directory: /Users/jacksonpires/Projects/mermaid/rails_realtime_erd/vendor/bundle/ruby/2.6.0/gems/date-3.5.1/ext/date
+make "DESTDIR="
+compiling date_core.c
+compiling date_parse.c
+compiling date_strftime.c
+compiling date_strptime.c
+linking shared-object date_core.bundle
+ld: warning: search path '/AppleInternal/Library/BuildRoots/4~CJjgugCJ4ENyM-QIheSyiY0FNL8vspelLyB3fTk/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.Internal.sdk/usr/local/lib' not found
+
+current directory: /Users/jacksonpires/Projects/mermaid/rails_realtime_erd/vendor/bundle/ruby/2.6.0/gems/date-3.5.1/ext/date
+make "DESTDIR=" install
+/usr/bin/install -c -m 0755 date_core.bundle ./.gem.20260516-66620-1nvuviz

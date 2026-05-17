@@ -1,0 +1,16 @@
+current directory: /Users/jacksonpires/Projects/mermaid/rails_realtime_erd/vendor/bundle/ruby/2.6.0/gems/websocket-driver-0.8.0/ext/websocket-driver
+/System/Library/Frameworks/Ruby.framework/Versions/2.6/usr/bin/ruby -I /System/Library/Frameworks/Ruby.framework/Versions/2.6/usr/lib/ruby/2.6.0 -r ./siteconf20260516-66620-k8n9u2.rb extconf.rb
+creating Makefile
+
+current directory: /Users/jacksonpires/Projects/mermaid/rails_realtime_erd/vendor/bundle/ruby/2.6.0/gems/websocket-driver-0.8.0/ext/websocket-driver
+make "DESTDIR=" clean
+
+current directory: /Users/jacksonpires/Projects/mermaid/rails_realtime_erd/vendor/bundle/ruby/2.6.0/gems/websocket-driver-0.8.0/ext/websocket-driver
+make "DESTDIR="
+compiling websocket_mask.c
+linking shared-object websocket_mask.bundle
+ld: warning: search path '/AppleInternal/Library/BuildRoots/4~CJjgugCJ4ENyM-QIheSyiY0FNL8vspelLyB3fTk/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.Internal.sdk/usr/local/lib' not found
+
+current directory: /Users/jacksonpires/Projects/mermaid/rails_realtime_erd/vendor/bundle/ruby/2.6.0/gems/websocket-driver-0.8.0/ext/websocket-driver
+make "DESTDIR=" install
+/usr/bin/install -c -m 0755 websocket_mask.bundle ./.gem.20260516-66620-14hasdx

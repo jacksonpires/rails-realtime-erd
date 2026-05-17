@@ -1,0 +1,40 @@
+<div class="space-x-2 inline-flex p-4">
+  <button type="button" data-tab-target="erdButton" data-action="click->tab#showErd" class="text-xs py-1 px-2 rounded hover:bg-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900 bg-white text-gray-900">ERD</button>
+  <button type="button" data-tab-target="codeButton" data-action="click->tab#showCode" class="text-xs py-1 px-2 rounded hover:bg-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900 bg-gray-400 text-gray-900">Code</button>
+</div>
+
+<div data-tab-target="erdPane" class="px-4 w-full min-h-[calc(100vh-56px-32px-56px)] relative overflow-hidden" data-zoom-pan-target="canvas">
+  <div data-zoom-pan-target="area">
+    <div id="rre-preview" data-diagram-target="preview"></div>
+  </div>
+
+  <div class="absolute bottom-0 left-1/2 -translate-x-1/2 p-4 pointer-events-none">
+    <div class="bg-gray-800 text-white text-[10px] px-3 py-1.5 rounded inline-flex items-center space-x-6">
+      <div class="inline-flex items-center">
+        <span class="font-medium">Movement:</span>
+        <span class="ml-1 text-white/60">Space + Mouse Drag / Middle Click + Drag</span>
+      </div>
+      <div class="inline-flex items-center">
+        <span class="font-medium">Zoom:</span>
+        <span class="ml-1 text-white/60">Mouse Wheel / Pinch In/Out</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="absolute bottom-0 right-0 p-4 space-x-4 flex">
+    <div class="space-x-2 flex items-center">
+      <button type="button" data-action="click->zoom-pan#zoomIn" class="text-xs py-1 px-2 rounded hover:bg-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900 bg-gray-400 text-gray-900">+</button>
+      <button type="button" data-action="click->zoom-pan#zoomOut" class="text-xs py-1 px-2 rounded hover:bg-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900 bg-gray-400 text-gray-900">-</button>
+    </div>
+    <div class="flex items-center space-x-2">
+      <button type="button" data-action="click->zoom-pan#moveLeft" class="text-xs py-1 px-2 rounded hover:bg-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900 bg-gray-400 text-gray-900">&larr;</button>
+      <div class="flex flex-col space-y-8">
+        <button type="button" data-action="click->zoom-pan#moveUp" class="text-xs py-1 px-2 rounded hover:bg-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900 bg-gray-400 text-gray-900">&uarr;</button>
+        <button type="button" data-action="click->zoom-pan#moveDown" class="text-xs py-1 px-2 rounded hover:bg-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900 bg-gray-400 text-gray-900">&darr;</button>
+      </div>
+      <button type="button" data-action="click->zoom-pan#moveRight" class="text-xs py-1 px-2 rounded hover:bg-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900 bg-gray-400 text-gray-900">&rarr;</button>
+    </div>
+  </div>
+</div>
+
+<textarea data-tab-target="codePane" data-rre-hidden data-diagram-target="codeOutput" readonly class="px-4 bg-gray-900 text-gray-300 font-mono w-full text-xs min-h-[calc(100vh-56px-32px-56px)] border-0 focus:ring-0 block"></textarea>

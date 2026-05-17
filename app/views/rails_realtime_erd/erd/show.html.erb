@@ -1,0 +1,44 @@
+<%= schema_data_tag(@schema) %>
+
+<div
+  id="rre-app"
+  data-controller="hash-state filter diagram clipboard download tab zoom-pan"
+  data-hash-state-filter-outlet="[data-controller~='filter']"
+  data-filter-diagram-outlet="[data-controller~='diagram']"
+  data-clipboard-diagram-outlet="[data-controller~='diagram']"
+  data-download-diagram-outlet="[data-controller~='diagram']"
+>
+  <header class="bg-red-600">
+    <nav class="mx-auto px-4">
+      <div class="flex w-full items-center justify-between py-4">
+        <h1 class="text-white inline-flex space-x-2 items-center">
+          <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M3 4h18v4H3zM3 10h18v4H3zM3 16h18v4H3z"/>
+          </svg>
+          <span class="font-bold">Rails Realtime ERD</span>
+        </h1>
+        <div class="space-x-4 inline-flex items-center">
+          <span class="text-white/80 text-xs"><%= @app_name %></span>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="flex">
+    <aside class="w-[250px] border-r border-gray-300 flex-none p-2">
+      <%= render "sidebar" %>
+    </aside>
+
+    <main class="flex-1 bg-gray-900 min-h-[calc(100vh-56px-32px)]">
+      <%= render "main" %>
+    </main>
+  </div>
+
+  <footer class="bg-gray-100">
+    <p class="text-center text-xs text-gray-600 py-2">
+      <a href="https://github.com/" class="hover:text-gray-400" target="_blank" rel="noopener noreferrer">
+        Rails Realtime ERD v<%= @version %>
+      </a>
+    </p>
+  </footer>
+</div>
