@@ -37,6 +37,7 @@ module RailsRealtimeErd
             model[:Columns] << {
               name: column.name,
               type: column.type,
+              sql_type: column.sql_type,
               key: key,
               comment: column.comment
             }
