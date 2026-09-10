@@ -1,12 +1,31 @@
-default: &default
+# Two interchangeable setups selected by the DB env var (the "one key"):
+#
+#   DB=sqlite      (default) — file-backed, zero config, what the specs use
+#   DB=postgresql             — needs a running Postgres; connection comes
+#                               from the PG* env vars below
+#
+# Flip the default permanently by changing "sqlite" on the next line, or set
+# DB=postgresql per-command without touching this file.
+<% db = ENV["DB"] || "sqlite" %>
+
+sqlite: &sqlite
   adapter: sqlite3
   pool: 5
   timeout: 5000
 
+postgresql: &postgresql
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+  host: <%= ENV["PGHOST"] || "127.0.0.1" %>
+  port: <%= ENV["PGPORT"] || 5432 %>
+  username: <%= ENV["PGUSER"] || "postgres" %>
+  password: <%= ENV["PGPASSWORD"] || "" %>
+
 development:
-  <<: *default
-  database: db/development.sqlite3
+  <<: *<%= db %>
+  database: <%= db == "postgresql" ? "rre_development" : "db/development.sqlite3" %>
 
 test:
-  <<: *default
-  database: db/test.sqlite3
+  <<: *<%= db %>
+  database: <%= db == "postgresql" ? "rre_test" : "db/test.sqlite3" %>
