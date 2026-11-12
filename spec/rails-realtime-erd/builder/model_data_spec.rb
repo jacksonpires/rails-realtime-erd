@@ -14,6 +14,11 @@ require "spec_helper"
 # `datetime`, `date`). On Postgres/MySQL a
 # `t.string limit: 255` / `t.decimal precision: 10, scale: 2` would come back
 # as `varchar(255)` / `decimal(10,2)` — the Builder forwards it verbatim.
+#
+# Exception: since Rails 7.0, `t.datetime` defaults to `precision: 6`, so the
+# timestamp columns come back as `datetime(6)` on Rails >= 7.0.
+DATETIME_SQL_TYPE = (ActiveRecord.gem_version >= Gem::Version.new("7.0")) ? "datetime(6)" : "datetime"
+
 RSpec.describe RailsRealtimeErd::Builder do
   let(:result) { described_class.model_data }
 
@@ -27,8 +32,8 @@ RSpec.describe RailsRealtimeErd::Builder do
         {name: "id", type: :integer, sql_type: "INTEGER", key: "PK", comment: nil},
         {name: "image", type: :string, sql_type: "varchar", key: "", comment: nil},
         {name: "user_id", type: :integer, sql_type: "INTEGER", key: "FK", comment: nil},
-        {name: "created_at", type: :datetime, sql_type: "datetime", key: "", comment: nil},
-        {name: "updated_at", type: :datetime, sql_type: "datetime", key: "", comment: nil}
+        {name: "created_at", type: :datetime, sql_type: DATETIME_SQL_TYPE, key: "", comment: nil},
+        {name: "updated_at", type: :datetime, sql_type: DATETIME_SQL_TYPE, key: "", comment: nil}
       ]
     }, {
       TableName: "tags",
@@ -38,8 +43,8 @@ RSpec.describe RailsRealtimeErd::Builder do
       Columns: [
         {name: "id", type: :integer, sql_type: "INTEGER", key: "PK", comment: nil},
         {name: "name", type: :string, sql_type: "varchar", key: "", comment: nil},
-        {name: "created_at", type: :datetime, sql_type: "datetime", key: "", comment: nil},
-        {name: "updated_at", type: :datetime, sql_type: "datetime", key: "", comment: nil}
+        {name: "created_at", type: :datetime, sql_type: DATETIME_SQL_TYPE, key: "", comment: nil},
+        {name: "updated_at", type: :datetime, sql_type: DATETIME_SQL_TYPE, key: "", comment: nil}
       ]
     }, {
       TableName: "posts_tags",
@@ -50,8 +55,8 @@ RSpec.describe RailsRealtimeErd::Builder do
         {name: "id", type: :integer, sql_type: "INTEGER", key: "PK", comment: nil},
         {name: "post_id", type: :integer, sql_type: "INTEGER", key: "FK", comment: nil},
         {name: "tag_id", type: :integer, sql_type: "INTEGER", key: "FK", comment: nil},
-        {name: "created_at", type: :datetime, sql_type: "datetime", key: "", comment: nil},
-        {name: "updated_at", type: :datetime, sql_type: "datetime", key: "", comment: nil}
+        {name: "created_at", type: :datetime, sql_type: DATETIME_SQL_TYPE, key: "", comment: nil},
+        {name: "updated_at", type: :datetime, sql_type: DATETIME_SQL_TYPE, key: "", comment: nil}
       ]
     }, {
       TableName: "posts",
@@ -62,8 +67,8 @@ RSpec.describe RailsRealtimeErd::Builder do
         {name: "id", type: :integer, sql_type: "INTEGER", key: "PK", comment: nil},
         {name: "title", type: :string, sql_type: "varchar", key: "", comment: nil},
         {name: "user_id", type: :integer, sql_type: "INTEGER", key: "FK", comment: nil},
-        {name: "created_at", type: :datetime, sql_type: "datetime", key: "", comment: nil},
-        {name: "updated_at", type: :datetime, sql_type: "datetime", key: "", comment: nil}
+        {name: "created_at", type: :datetime, sql_type: DATETIME_SQL_TYPE, key: "", comment: nil},
+        {name: "updated_at", type: :datetime, sql_type: DATETIME_SQL_TYPE, key: "", comment: nil}
       ]
     }, {
       TableName: "comments",
@@ -75,8 +80,8 @@ RSpec.describe RailsRealtimeErd::Builder do
         {name: "body", type: :string, sql_type: "varchar", key: "", comment: nil},
         {name: "post_id", type: :integer, sql_type: "INTEGER", key: "FK", comment: nil},
         {name: "user_id", type: :integer, sql_type: "INTEGER", key: "FK", comment: nil},
-        {name: "created_at", type: :datetime, sql_type: "datetime", key: "", comment: nil},
-        {name: "updated_at", type: :datetime, sql_type: "datetime", key: "", comment: nil}
+        {name: "created_at", type: :datetime, sql_type: DATETIME_SQL_TYPE, key: "", comment: nil},
+        {name: "updated_at", type: :datetime, sql_type: DATETIME_SQL_TYPE, key: "", comment: nil}
       ]
     }, {
       TableName: "user_profiles",
@@ -87,8 +92,8 @@ RSpec.describe RailsRealtimeErd::Builder do
         {name: "id", type: :integer, sql_type: "INTEGER", key: "PK", comment: nil},
         {name: "birthday", type: :date, sql_type: "date", key: "", comment: nil},
         {name: "user_id", type: :integer, sql_type: "INTEGER", key: "FK", comment: nil},
-        {name: "created_at", type: :datetime, sql_type: "datetime", key: "", comment: nil},
-        {name: "updated_at", type: :datetime, sql_type: "datetime", key: "", comment: nil}
+        {name: "created_at", type: :datetime, sql_type: DATETIME_SQL_TYPE, key: "", comment: nil},
+        {name: "updated_at", type: :datetime, sql_type: DATETIME_SQL_TYPE, key: "", comment: nil}
       ]
     }, {
       TableName: "users",
@@ -99,8 +104,8 @@ RSpec.describe RailsRealtimeErd::Builder do
         {name: "id", type: :integer, sql_type: "INTEGER", key: "PK", comment: nil},
         {name: "name", type: :string, sql_type: "varchar", key: "", comment: nil},
         {name: "email", type: :string, sql_type: "varchar", key: "", comment: nil},
-        {name: "created_at", type: :datetime, sql_type: "datetime", key: "", comment: nil},
-        {name: "updated_at", type: :datetime, sql_type: "datetime", key: "", comment: nil}
+        {name: "created_at", type: :datetime, sql_type: DATETIME_SQL_TYPE, key: "", comment: nil},
+        {name: "updated_at", type: :datetime, sql_type: DATETIME_SQL_TYPE, key: "", comment: nil}
       ]
     }])
   end
