@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 The gem is a `Rails::Engine` with `isolate_namespace`. Three pieces of code do the real work:
 
-- **`lib/rails-realtime-erd/builder.rb`** — the introspection engine. Walks `ActiveRecord::Base.descendants`, builds a `Models` array (table name, table comment, columns with PK/FK tagging from `connection.foreign_keys`) and a `Relations` array (with cardinality glyphs and merged comments). **This file is ported almost verbatim from the original `rails-mermaid_erd` Builder** plus a filter that skips Rails internal classes (`ActiveRecord::SchemaMigration`, `ActiveRecord::InternalMetadata`, `ActiveStorage::*`, `ActionText::*`, `ActionMailbox::*`, and any `abstract_class`).
+- **`lib/rails-realtime-erd/builder.rb`** — the introspection engine. Walks `ActiveRecord::Base.descendants`, builds a `Models` array (table name, table comment, columns with abstract `type` + raw `sql_type` and PK/FK tagging from `connection.foreign_keys`) and a `Relations` array (with cardinality glyphs and merged comments). **This file is ported almost verbatim from the original `rails-mermaid_erd` Builder** plus a filter that skips Rails internal classes (`ActiveRecord::SchemaMigration`, `ActiveRecord::InternalMetadata`, `ActiveStorage::*`, `ActionText::*`, `ActionMailbox::*`, and any `abstract_class`).
 - **`lib/rails-realtime-erd/engine.rb`** — installs an initializer that auto-mounts the engine at `RailsRealtimeErd.configuration.mount_path` (default `/rails/erd`) when `Rails.env` is in `enabled_environments` (default `development`, `test`) and `auto_mount` is true.
 - **`app/controllers/rails_realtime_erd/erd_controller.rb`** — calls `Rails.application.eager_load!`, clears the schema cache in dev (so `schema.rb` updates show up on the next refresh), runs the Builder, hands the JSON to the view as `@schema`.
 
@@ -37,7 +37,7 @@ Seven Stimulus controllers split the work:
 
 | Controller | Responsibility |
 |---|---|
-| `filter` | Selected models, options (preview-relations / show-key / show-comment / hide-columns / show-relation-comment), filter text, select all / none. Broadcasts `filter:changed` events. |
+| `filter` | Selected models, options (preview-relations / show-key / show-comment / show-type / hide-columns / show-relation-comment), filter text, select all / none. Broadcasts `filter:changed` events. |
 | `diagram` | Listens to `filter:changed`, computes the `erDiagram` Mermaid code, calls `mermaid.render`, injects the SVG into `#rre-preview`. Owns the schema data loaded from `<script id="rre-schema-data">`. |
 | `hash-state` | Restores state from `location.hash` (base64 JSON) on connect; writes back on every `filter:changed`. Uses the `filter` outlet. |
 | `clipboard` | Copy URL / Mermaid code / Markdown code with 1s "Copied" feedback. Reads the current Mermaid code via the `diagram` outlet. |

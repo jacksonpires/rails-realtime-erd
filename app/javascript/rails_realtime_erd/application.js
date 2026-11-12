@@ -17,8 +17,8 @@ window.RailsRealtimeErdStimulus = application;
 class FilterController extends Controller {
   static targets = [
     "search", "modelList", "modelRow", "modelCheckbox",
-    "previewRelations", "showRelationComment", "showKey", "showComment", "hideColumns", "showOnlyKeys",
-    "showKeyLabel", "showCommentLabel", "showOnlyKeysLabel"
+    "previewRelations", "showRelationComment", "showKey", "showComment", "showType", "hideColumns", "showOnlyKeys",
+    "showKeyLabel", "showCommentLabel", "showTypeLabel", "showOnlyKeysLabel"
   ];
 
   connect() {
@@ -28,6 +28,7 @@ class FilterController extends Controller {
       isShowRelationComment: false,
       isShowKey: false,
       isShowComment: false,
+      isShowType: false,
       isHideColumns: false,
       isShowOnlyKeys: false,
       filterText: ""
@@ -56,6 +57,7 @@ class FilterController extends Controller {
     if (this.hasShowRelationCommentTarget) this.showRelationCommentTarget.checked = !!this.state.isShowRelationComment;
     if (this.hasShowKeyTarget) this.showKeyTarget.checked = !!this.state.isShowKey;
     if (this.hasShowCommentTarget) this.showCommentTarget.checked = !!this.state.isShowComment;
+    if (this.hasShowTypeTarget) this.showTypeTarget.checked = !!this.state.isShowType;
     if (this.hasHideColumnsTarget) this.hideColumnsTarget.checked = !!this.state.isHideColumns;
     if (this.hasShowOnlyKeysTarget) this.showOnlyKeysTarget.checked = !!this.state.isShowOnlyKeys;
     if (this.hasSearchTarget) this.searchTarget.value = this.state.filterText;
@@ -81,12 +83,14 @@ class FilterController extends Controller {
     const inputs = [
       this.hasShowKeyTarget && this.showKeyTarget,
       this.hasShowCommentTarget && this.showCommentTarget,
+      this.hasShowTypeTarget && this.showTypeTarget,
       this.hasShowOnlyKeysTarget && this.showOnlyKeysTarget
     ].filter(Boolean);
     inputs.forEach(input => { input.disabled = disabled; });
     const labels = [
       this.hasShowKeyLabelTarget && this.showKeyLabelTarget,
       this.hasShowCommentLabelTarget && this.showCommentLabelTarget,
+      this.hasShowTypeLabelTarget && this.showTypeLabelTarget,
       this.hasShowOnlyKeysLabelTarget && this.showOnlyKeysLabelTarget
     ].filter(Boolean);
     labels.forEach(label => {
@@ -119,6 +123,7 @@ class FilterController extends Controller {
       isShowRelationComment: this.hasShowRelationCommentTarget && this.showRelationCommentTarget.checked,
       isShowKey: this.hasShowKeyTarget && this.showKeyTarget.checked,
       isShowComment: this.hasShowCommentTarget && this.showCommentTarget.checked,
+      isShowType: this.hasShowTypeTarget && this.showTypeTarget.checked,
       isHideColumns: this.hasHideColumnsTarget && this.hideColumnsTarget.checked,
       isShowOnlyKeys: this.hasShowOnlyKeysTarget && this.showOnlyKeysTarget.checked
     };
@@ -158,6 +163,7 @@ class FilterController extends Controller {
       isShowRelationComment: false,
       isShowKey: false,
       isShowComment: false,
+      isShowType: false,
       isHideColumns: false,
       isShowOnlyKeys: false,
       filterText: ""
@@ -232,7 +238,8 @@ class DiagramController extends Controller {
           if (state.isShowOnlyKeys && !column.key) return;
           const key = state.isShowKey ? (column.key || "") : "";
           const comment = state.isShowComment ? `"${column.comment || ""}"` : "";
-          lines.push(`        ${column.type} ${column.name} ${key} ${comment}`);
+          const type = state.isShowType ? this.sanitizeType(column.sql_type) || column.type : column.type;
+          lines.push(`        ${type} ${column.name} ${key} ${comment}`);
         });
       }
       lines.push("    }");
@@ -245,6 +252,20 @@ class DiagramController extends Controller {
     });
 
     return lines.join("\n");
+  }
+
+  // Mermaid erDiagram attribute types accept only alphanumerics (plus a
+  // trailing [] for arrays), so a raw SQL type like "varchar(255)" or
+  // "decimal(10,2)" breaks the parser. Preserve a trailing [], then collapse
+  // every other run of non-alphanumerics into a single "_".
+  //   varchar(255)   -> varchar_255
+  //   decimal(10,2)  -> decimal_10_2
+  //   integer[]      -> integer[]
+  sanitizeType(raw) {
+    const s = String(raw || "");
+    const isArray = /\[\]\s*$/.test(s);
+    const base = s.replace(/\[\]\s*$/, "").replace(/[^A-Za-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+    return isArray ? `${base}[]` : base;
   }
 
   filteredData(state) {
@@ -330,6 +351,7 @@ class HashStateController extends Controller {
         isShowRelationComment: !!parsed.isShowRelationComment,
         isShowKey: !!parsed.isShowKey,
         isShowComment: !!parsed.isShowComment,
+        isShowType: !!parsed.isShowType,
         isHideColumns: !!parsed.isHideColumns,
         isShowOnlyKeys: !!parsed.isShowOnlyKeys
       });
@@ -344,6 +366,7 @@ class HashStateController extends Controller {
       isShowRelationComment: state.isShowRelationComment,
       isShowKey: state.isShowKey,
       isShowComment: state.isShowComment,
+      isShowType: state.isShowType,
       isHideColumns: state.isHideColumns,
       isShowOnlyKeys: state.isShowOnlyKeys
     };
