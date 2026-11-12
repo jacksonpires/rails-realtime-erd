@@ -1,9 +1,9 @@
-<div class="space-x-2 inline-flex p-4">
+<div class="space-x-2 flex flex-none p-4">
   <button type="button" data-tab-target="erdButton" data-action="click->tab#showErd" class="text-xs py-1 px-2 rounded hover:bg-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900 bg-white text-gray-900">ERD</button>
   <button type="button" data-tab-target="codeButton" data-action="click->tab#showCode" class="text-xs py-1 px-2 rounded hover:bg-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900 bg-gray-400 text-gray-900">Code</button>
 </div>
 
-<div data-tab-target="erdPane" class="px-4 w-full min-h-[calc(100vh-56px-32px-56px)] relative overflow-hidden" data-zoom-pan-target="canvas">
+<div data-tab-target="erdPane" class="px-4 w-full flex-1 min-h-0 relative overflow-hidden" data-zoom-pan-target="canvas">
   <div data-zoom-pan-target="area">
     <div id="rre-preview" data-diagram-target="preview"></div>
   </div>
@@ -37,4 +37,4 @@
   </div>
 </div>
 
-<textarea data-tab-target="codePane" data-rre-hidden data-diagram-target="codeOutput" readonly class="px-4 bg-gray-900 text-gray-300 font-mono w-full text-xs min-h-[calc(100vh-56px-32px-56px)] border-0 focus:ring-0 block"></textarea>
+<textarea data-tab-target="codePane" data-rre-hidden data-diagram-target="codeOutput" readonly class="px-4 bg-gray-900 text-gray-300 font-mono w-full text-xs flex-1 min-h-0 resize-none border-0 focus:ring-0 block"></textarea>

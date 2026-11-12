@@ -2,13 +2,14 @@
 
 <div
   id="rre-app"
+  class="flex flex-col h-screen overflow-hidden"
   data-controller="hash-state filter diagram clipboard download tab zoom-pan"
   data-hash-state-filter-outlet="[data-controller~='filter']"
   data-filter-diagram-outlet="[data-controller~='diagram']"
   data-clipboard-diagram-outlet="[data-controller~='diagram']"
   data-download-diagram-outlet="[data-controller~='diagram']"
 >
-  <header class="bg-red-600">
+  <header class="bg-red-600 flex-none">
     <nav class="mx-auto px-4">
       <div class="flex w-full items-center justify-between py-4">
         <h1 class="text-white inline-flex space-x-2 items-center">
@@ -24,17 +25,17 @@
     </nav>
   </header>
 
-  <div class="flex">
-    <aside class="w-[250px] border-r border-gray-300 flex-none p-2">
+  <div class="flex flex-1 min-h-0">
+    <aside class="w-[250px] border-r border-gray-300 flex-none p-2 overflow-y-auto">
       <%= render "sidebar" %>
     </aside>
 
-    <main class="flex-1 bg-gray-900 min-h-[calc(100vh-56px-32px)]">
+    <main class="flex-1 min-w-0 bg-gray-900 flex flex-col">
       <%= render "main" %>
     </main>
   </div>
 
-  <footer class="bg-gray-100">
+  <footer class="bg-gray-100 flex-none">
     <p class="text-center text-xs text-gray-600 py-2">
       <a href="https://github.com/" class="hover:text-gray-400" target="_blank" rel="noopener noreferrer">
         Rails Realtime ERD v<%= @version %>
