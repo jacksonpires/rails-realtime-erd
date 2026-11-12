@@ -18,6 +18,8 @@ The frontend is plain Hotwire (Stimulus) — **no Vue**, no build step, no asset
 - Copy Mermaid code, Copy Markdown, Copy shareable URL (state in `location.hash`)
 - Download SVG / PNG of the rendered diagram
 - Sidebar filter to scope the diagram to a subset of models
+- Optional raw column types & sizes as reported by the database (`varchar(255)`, `numeric(10,2)`, …)
+- Full-window viewer: the sidebar scrolls on its own and the diagram is fitted to the pane on render
 - Works with any host asset pipeline (Sprockets, Propshaft, importmap, or none) — all CSS/JS is inlined by the engine layout
 
 ## Installation
