@@ -254,18 +254,33 @@ class DiagramController extends Controller {
     return lines.join("\n");
   }
 
-  // Mermaid erDiagram attribute types accept only alphanumerics (plus a
-  // trailing [] for arrays), so a raw SQL type like "varchar(255)" or
-  // "decimal(10,2)" breaks the parser. Preserve a trailing [], then collapse
-  // every other run of non-alphanumerics into a single "_".
-  //   varchar(255)   -> varchar_255
-  //   decimal(10,2)  -> decimal_10_2
-  //   integer[]      -> integer[]
+  // Mermaid erDiagram attribute types must match [*A-Za-z_][A-Za-z0-9\-_\[\]()]*
+  // — no spaces, commas or quotes. Postgres reports verbose multi-word types,
+  // so map those to their standard short aliases first, then make whatever is
+  // left parser-safe:
+  //   character varying(255)          -> varchar(255)
+  //   timestamp(6) without time zone  -> timestamp(6)
+  //   timestamp with time zone        -> timestamptz
+  //   decimal(10,2)                   -> decimal(10_2)
+  //   enum('a','b')                   -> enum(a_b)
+  //   integer[]                       -> integer[]
   sanitizeType(raw) {
-    const s = String(raw || "");
-    const isArray = /\[\]\s*$/.test(s);
-    const base = s.replace(/\[\]\s*$/, "").replace(/[^A-Za-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
-    return isArray ? `${base}[]` : base;
+    let s = String(raw || "").trim();
+    s = s
+      .replace(/^character varying/i, "varchar")
+      .replace(/^character\b/i, "char")
+      .replace(/^bit varying/i, "varbit")
+      .replace(/^double precision/i, "float8")
+      .replace(/^(timestamp|time)(\(\d+\))? without time zone/i, "$1$2")
+      .replace(/^(timestamp|time)(\(\d+\))? with time zone/i, "$1tz$2");
+    s = s
+      .replace(/['"`]/g, "")
+      .replace(/\s*,\s*/g, "_")
+      .replace(/[^A-Za-z0-9\-_\[\]()]+/g, "_")
+      .replace(/_+/g, "_")
+      .replace(/^_+|_+$/g, "");
+    if (/^[0-9\-\[\]()]/.test(s)) s = `_${s}`;
+    return s;
   }
 
   filteredData(state) {
