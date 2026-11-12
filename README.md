@@ -42,6 +42,21 @@ That's it. Boot your Rails dev server and visit:
 http://localhost:3000/rails/erd
 ```
 
+## Compatibility
+
+Supported versions:
+
+| Rails | Ruby |
+|---|---|
+| 8.1 | 3.2 – 4.0 |
+| 8.0 | 3.2 – 4.0 |
+| 7.2 | 3.3 – 4.0 |
+| 7.1 | 3.2 – 4.0 |
+| 7.0 | 3.1 – 3.4 |
+| 6.1 | 3.0 – 3.3 (Rails 6.1 itself does not load on Ruby ≥ 3.4) |
+
+CI runs the full test suite on the oldest and newest Ruby in each range. Rails versions older than 6.1 are not supported.
+
 ## Configuration
 
 Optional. Create `config/initializers/rails_realtime_erd.rb`:
@@ -85,13 +100,7 @@ $ BUNDLE_GEMFILE=gemfiles/rails_6_1.gemfile bundle install
 $ BUNDLE_GEMFILE=gemfiles/rails_6_1.gemfile bundle exec rspec
 ```
 
-CI (`.github/workflows/ci.yml`) runs the suite against this matrix:
-
-| Rails | Ruby |
-|---|---|
-| 6.1 (`gemfiles/rails_6_1.gemfile`) | 3.0, 3.3 — Rails 6.1 itself does not load on Ruby ≥ 3.4 |
-| 7.2 (`gemfiles/rails_7_2.gemfile`) | 3.3, 4.0 |
-| 8.1 (`Gemfile`) | 3.4, 4.0 |
+The Gemfiles are `gemfiles/rails_6_1.gemfile`, `rails_7_0`, `rails_7_1`, `rails_7_2`, `rails_8_0`, and the root `Gemfile` for Rails 8.1. CI (`.github/workflows/ci.yml`) runs every one of them against the Ruby versions listed under [Compatibility](#compatibility).
 
 ## License
 
