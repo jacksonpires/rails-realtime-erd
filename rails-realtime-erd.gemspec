@@ -5,16 +5,16 @@ Gem::Specification.new do |spec|
   spec.version = RailsRealtimeErd::VERSION
   spec.authors = ["Jackson Pires"]
   spec.email = ["jackson@linkana.com"]
-  spec.homepage = "https://github.com/jacksonpires/rails-realtime-erd"
+  spec.homepage = RailsRealtimeErd::HOMEPAGE
   spec.summary = "Live Mermaid ERD viewer mounted as a Rails route, powered by Hotwire."
   spec.description = "Mounts /rails/erd in your Rails app. On every request the gem introspects ActiveRecord models and renders a Mermaid ERD viewer with Stimulus-driven filters, zoom/pan, copy & download. No pre-generated HTML file."
   spec.license = "MIT"
 
-  spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = spec.homepage
+  spec.metadata["changelog_uri"] = "#{spec.homepage}/blob/main/CHANGELOG.md"
 
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
-    Dir["{app,config,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
+    Dir["{app,config,lib}/**/*", "CHANGELOG.md", "MIT-LICENSE", "Rakefile", "README.md"]
   end
   spec.require_paths = ["lib"]
 

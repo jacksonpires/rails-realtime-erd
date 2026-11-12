@@ -27,6 +27,12 @@ RSpec.describe "GET /rails/erd", type: :request do
     expect(response.body).to include('src="/rails/erd/assets/mermaid.js"')
     expect(response.body).to include('src="/rails/erd/assets/application.js"')
   end
+
+  it "links the footer to the gem's repository" do
+    get "/rails/erd"
+    expect(response.body).to include(%(href="#{RailsRealtimeErd::HOMEPAGE}"))
+    expect(response.body).to include("Rails Realtime ERD v#{RailsRealtimeErd::VERSION}")
+  end
 end
 
 RSpec.describe "GET /rails/erd/assets/:name", type: :request do
