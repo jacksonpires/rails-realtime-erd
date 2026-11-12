@@ -208,9 +208,15 @@ a { color: inherit; text-decoration: inherit; }
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  /* Bottom padding keeps the fitted diagram clear of the overlaid
+   * Movement/Zoom hint bar at the bottom of the pane. */
+  padding: 1rem 1rem 5rem;
 }
+/* Fit the diagram inside the pane on first render (never upscaled: Mermaid
+ * caps the SVG at its natural size via an inline max-width). Zoom/pan then
+ * works from there. */
 #rre-preview svg {
   max-width: 100%;
+  max-height: 100%;
   height: auto;
 }
