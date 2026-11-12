@@ -2,9 +2,10 @@ source "https://rubygems.org"
 
 gemspec
 
-gem "rails", "6.1.7.10"
-gem "sqlite3", "1.5.0"
-gem "rspec-rails", "6.1.5"
-gem "rake", "13.4.2"
-gem "standard", "1.28.5"
-
+# Default development target: latest Rails. Older supported versions are
+# tested via gemfiles/*.gemfile (see README "Development").
+gem "rails", "~> 8.1.0"
+gem "sqlite3", ">= 2.1"
+gem "rspec-rails", "~> 8.0"
+gem "rake"
+gem "standard", require: false

@@ -11,7 +11,7 @@ module RailsRealtimeErd
 
       mount_path = config.mount_path
       app.routes.append do
-        mount RailsRealtimeErd::Engine => mount_path, as: :rails_realtime_erd
+        mount RailsRealtimeErd::Engine, at: mount_path, as: :rails_realtime_erd
       end
     end
   end

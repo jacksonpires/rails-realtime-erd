@@ -67,24 +67,16 @@ bundle exec standardrb --fix
 
 The dummy app at `spec/dummy` uses SQLite. SQLite does NOT preserve column-level or table-level comments — the Builder spec asserts `nil` / `""` for those fields accordingly. The Builder code forwards whatever `column.comment` / `connection.table_comment` returns, so on Postgres/MySQL those values would round-trip correctly. Don't add Postgres-specific behavior to the Builder thinking the spec is wrong.
 
-### macOS / Apple Silicon + system Ruby caveat
+### Multi-Rails test matrix
 
-The system Ruby on Apple Silicon is a universal binary that reports `RbConfig::CONFIG['arch'] == "universal-darwin25"`. Bundler 1.17 maps that to `x86_64-darwin` when picking precompiled binary gems, so freshly running `bundle install` will install x86_64 builds of `sqlite3` and `nokogiri` that fail to load (`incompatible architecture`). The repo's `Gemfile.lock` already pins `sqlite3 = 1.5.0` to dodge another issue (1.6+ requires Ruby 2.7+), but the binary platform mismatch can recur if you regenerate the lockfile. Fix:
+The root `Gemfile` targets the latest Rails (8.1, needs Ruby ≥ 3.2). Older supported versions have their own Gemfile in `gemfiles/` (`rails_6_1.gemfile`, `rails_7_2.gemfile`); select one with `BUNDLE_GEMFILE=gemfiles/rails_6_1.gemfile bundle exec rspec`. Dev dependencies (sqlite3, rspec-rails, standard) live in these Gemfiles, **not** in the gemspec — pinning them in the gemspec forces the same version on every Gemfile that calls `gemspec` and breaks the matrix (Rails 8 needs sqlite3 ≥ 2.1, Rails 6.1 needs sqlite3 1.x). Rails 6.1 does not load on Ruby ≥ 3.4 (`bigdecimal` is no longer a default gem); test it on Ruby ≤ 3.3. CI matrix is in `.github/workflows/ci.yml`.
 
-```bash
-gem fetch sqlite3 -v 1.5.0 --platform arm64-darwin
-gem fetch nokogiri -v <version> --platform arm64-darwin
-gem install --install-dir vendor/bundle/ruby/2.6.0 --no-document /tmp/<file>.gem
-rm -rf vendor/bundle/ruby/2.6.0/gems/<name>-x86_64-darwin
-rm vendor/bundle/ruby/2.6.0/specifications/<name>-x86_64-darwin.gemspec
-```
-
-Or upgrade to a non-system Ruby (rbenv/asdf) ≥ 2.7 and the problem goes away.
+Use a non-system Ruby (rbenv/asdf). The macOS system Ruby 2.6 is a universal binary that makes Bundler install x86_64 builds of native gems (`incompatible architecture`).
 
 ## Conventions
 
 - Code style is **StandardRb**.
-- Gem must keep working on Rails `>= 6.1` per the gemspec, so avoid newer-Rails-only APIs.
+- Gem must keep working on Rails `>= 6.1` per the gemspec, so avoid newer-Rails-only APIs — and run the 6.1 gemfile before calling a change done.
 - UI is **English only** (no i18n) — strings are static in the ERB views.
 - The viewer must remain entirely client-side after initial page load. Don't add Turbo Frame roundtrips per checkbox — Stimulus state changes only.
 - The engine layout must remain standalone (don't `layout "application"` against the host) — host conflicts are easy to introduce and silent.

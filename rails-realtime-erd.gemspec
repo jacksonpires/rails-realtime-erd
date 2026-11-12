@@ -18,10 +18,10 @@ Gem::Specification.new do |spec|
   end
   spec.require_paths = ["lib"]
 
+  spec.required_ruby_version = ">= 2.5.0"
+
   spec.add_dependency "rails", ">= 6.1.7.10"
 
-  spec.add_development_dependency "sqlite3", "1.5.0"
-  spec.add_development_dependency "rspec-rails", "6.1.5"
-  spec.add_development_dependency "rake", "13.4.2"
-  spec.add_development_dependency "standard", "1.28.5"
+  # Development dependencies live in Gemfile / gemfiles/*.gemfile so each
+  # Rails version in the test matrix can pick a compatible sqlite3/rspec-rails.
 end

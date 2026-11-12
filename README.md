@@ -73,7 +73,23 @@ Specs run against a SQLite-backed dummy Rails app in `spec/dummy`. SQLite does n
 ```bash
 $ bundle install
 $ bundle exec rspec
+$ bundle exec standardrb
 ```
+
+The root `Gemfile` targets the latest Rails. Older supported Rails versions have their own Gemfile under `gemfiles/`:
+
+```bash
+$ BUNDLE_GEMFILE=gemfiles/rails_6_1.gemfile bundle install
+$ BUNDLE_GEMFILE=gemfiles/rails_6_1.gemfile bundle exec rspec
+```
+
+CI (`.github/workflows/ci.yml`) runs the suite against this matrix:
+
+| Rails | Ruby |
+|---|---|
+| 6.1 (`gemfiles/rails_6_1.gemfile`) | 3.0, 3.3 — Rails 6.1 itself does not load on Ruby ≥ 3.4 |
+| 7.2 (`gemfiles/rails_7_2.gemfile`) | 3.3, 4.0 |
+| 8.1 (`Gemfile`) | 3.4, 4.0 |
 
 ## License
 
