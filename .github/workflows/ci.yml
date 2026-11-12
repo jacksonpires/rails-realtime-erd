@@ -13,12 +13,19 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # Each supported Rails minor is tested on its oldest and newest Ruby we support.
           # Rails 6.1 does not load on Ruby >= 3.4 (bigdecimal is no longer a default gem).
           - { rails: "6.1", ruby: "3.0", gemfile: gemfiles/rails_6_1.gemfile }
           - { rails: "6.1", ruby: "3.3", gemfile: gemfiles/rails_6_1.gemfile }
+          - { rails: "7.0", ruby: "3.1", gemfile: gemfiles/rails_7_0.gemfile }
+          - { rails: "7.0", ruby: "3.4", gemfile: gemfiles/rails_7_0.gemfile }
+          - { rails: "7.1", ruby: "3.2", gemfile: gemfiles/rails_7_1.gemfile }
+          - { rails: "7.1", ruby: "4.0", gemfile: gemfiles/rails_7_1.gemfile }
           - { rails: "7.2", ruby: "3.3", gemfile: gemfiles/rails_7_2.gemfile }
           - { rails: "7.2", ruby: "4.0", gemfile: gemfiles/rails_7_2.gemfile }
-          - { rails: "8.1", ruby: "3.4", gemfile: Gemfile }
+          - { rails: "8.0", ruby: "3.2", gemfile: gemfiles/rails_8_0.gemfile }
+          - { rails: "8.0", ruby: "4.0", gemfile: gemfiles/rails_8_0.gemfile }
+          - { rails: "8.1", ruby: "3.2", gemfile: Gemfile }
           - { rails: "8.1", ruby: "4.0", gemfile: Gemfile }
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/${{ matrix.gemfile }}
