@@ -1,10 +1,30 @@
 ActiveRecord::Schema.define(version: 0) do
+  create_table "bloggers", force: :cascade do |t|
+    t.string "name", null: false
+  end
+
+  create_table "bloggers_notes", id: false, force: :cascade do |t|
+    t.integer "blogger_id", null: false
+    t.integer "note_id", null: false
+  end
+
   create_table "comments", force: :cascade do |t|
     t.string "body", null: false
     t.integer "post_id", null: false
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "entries", force: :cascade do |t|
+    t.string "title", null: false
+    t.integer "blogger_id"
+  end
+
+  create_table "notes", force: :cascade do |t|
+    t.string "body", null: false
+    t.integer "entry_id", null: false
+    t.integer "blogger_id", null: false
   end
 
   create_table "posts", force: :cascade do |t|

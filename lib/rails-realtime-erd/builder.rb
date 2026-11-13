@@ -76,7 +76,9 @@ module RailsRealtimeErd
           defined_model.reflect_on_all_associations(:has_and_belongs_to_many).each do |reflection|
             reflection_model_name = get_reflection_model_name(reflection)
 
-            reverse_relation = result[:Relations].find { |r| r[:RightModelName] == model[:ModelName] && r[:LeftModelName] == reflection_model_name }
+            # HABTM edges are dotted; never merge into a direct (`--`) edge
+            # between the same pair, or its HM/BT comment gets overwritten.
+            reverse_relation = result[:Relations].find { |r| r[:RightModelName] == model[:ModelName] && r[:LeftModelName] == reflection_model_name && r[:Line] == ".." }
             if reverse_relation
               reverse_relation[:Comment] = "HABTM"
             else
@@ -94,7 +96,9 @@ module RailsRealtimeErd
           defined_model.reflect_on_all_associations(:belongs_to).each do |reflection|
             reflection_model_name = get_reflection_model_name(reflection)
 
-            reverse_relation = result[:Relations].find { |r| r[:RightModelName] == model[:ModelName] && r[:LeftModelName] == reflection_model_name }
+            # belongs_to is always the direct side of a has_many/has_one; skip
+            # dotted through edges between the same pair even if emitted first.
+            reverse_relation = result[:Relations].find { |r| r[:RightModelName] == model[:ModelName] && r[:LeftModelName] == reflection_model_name && r[:Line] == "--" }
             if reverse_relation
               if (::Rails.application.config.active_record.belongs_to_required_by_default && reflection.options[:optional]) || (!::Rails.application.config.active_record.belongs_to_required_by_default && !reflection.options[:required])
                 reverse_relation[:LeftValue] = "|o"
