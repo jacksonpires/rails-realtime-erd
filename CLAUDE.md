@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Knowledge base (OKF)
+
+Everything about this gem — knowledge, decisions and documentation — is recorded via **okf** (Open Knowledge Format). Use the `okf` skill to capture new knowledge, record decisions, update docs after code changes, and look things up before re-deriving them. When something worth remembering comes up (a design decision, a gotcha, a compatibility constraint, a how-to), record it in the OKF bundle rather than leaving it only in chat, commit messages or ad-hoc notes.
+
 ## What this gem does
 
 `rails-realtime-erd` mounts `GET /rails/erd` in a host Rails app and renders a Mermaid ERD on every request by introspecting `ActiveRecord::Base.descendants`. There is no pre-generated artifact — the ERD reflects whatever the live schema + models look like at request time. Frontend is Stimulus (Hotwire). The original inspiration is [`rails-mermaid_erd`](https://github.com/koedame/rails-mermaid_erd), which generates a static HTML file via a rake task using Vue.
@@ -21,17 +25,21 @@ The Builder does **not** emit one relation per association. As it walks each sid
 - The `LeftValue`/`RightValue` cardinality glyphs (`||`, `}o`, `o{`, `|o`, `o|`) encode optional vs. required ends, and get *upgraded* when the reverse side reveals optionality (e.g. `belongs_to optional: true` flips `||` → `o|` / `|o`).
 - The `Comment` field accumulates an annotation per association name (`HM:posts`, `BT:user`, `HMT:tags`, `HABTM`, etc.) so a single Mermaid relation line carries every Rails-side name that points at it.
 - `through:` associations live on a separate edge (`Line: ".."`) so they don't merge with the underlying direct association.
+- Every reverse lookup matches the edge's `Line` as well as the model pair: `has_many`/`has_one`/`belongs_to` only merge into `--` edges, `through:` and HABTM only into `..` edges. (The `belongs_to` and HABTM checks are a deliberate divergence from upstream: without them `belongs_to` folded into an earlier through edge, and HABTM overwrote a direct edge's comment.) HABTM and `through:` both draw `..`, so the line alone can't tell those two apart. That ambiguity is known and unresolved.
+- Order matters: models are walked alphabetically, associations in the order `has_many → habtm → belongs_to → has_one`, and the first side visited becomes the Left model.
 
-The contract is encoded directly in `spec/rails-realtime-erd/builder/model_data_spec.rb`. When changing this logic, that spec is the regression net.
+The contract is encoded directly in `spec/rails-realtime-erd/builder/model_data_spec.rb`. When changing this logic, that spec is the regression net. The dummy app's `Blogger`/`Entry`/`Note` models exist only to pin the line-style merge cases. Don't "simplify" them away.
 
 `get_reflection_model_name` is the single place that resolves an association to its target model name, handling `class_name:`, `through: + source:`, and the bare case. Touch carefully — it affects every relation.
 
 ### Frontend
 
-Standalone layout at `app/views/layouts/rails_realtime_erd/application.html.erb`. The layout does NOT extend the host app's layout (to avoid Turbo / Stimulus / CSS conflicts) and inlines its own assets:
+Standalone layout at `app/views/layouts/rails_realtime_erd/application.html.erb`. The layout does NOT extend the host app's layout (to avoid Turbo / Stimulus / CSS conflicts) and ships its own assets, **without any CDN**, so it works under a strict Content Security Policy (`script-src 'self'`) and offline:
 
-- **TailwindCSS** + **Mermaid.js** + **Stimulus** are loaded from CDN
-- **Engine CSS** (`app/assets/stylesheets/rails_realtime_erd/erd.css`) and **all Stimulus controllers** (`app/javascript/rails_realtime_erd/application.js`) are inlined via `File.read` in the helper `inline_asset`. This means the gem works regardless of the host's asset pipeline choice (Sprockets / Propshaft / importmap / none).
+- **CSS**: `app/assets/stylesheets/rails_realtime_erd/erd.css` is inlined into a `<style>` tag via `inline_stylesheet` (`File.read`). It is a hand-written subset of Tailwind-style utility classes, only the ones the ERB views use. It is not Tailwind. A new utility class in a view does nothing until it is added to `erd.css`.
+- **JS**: Stimulus 3.2.1 and Mermaid are vendored under `app/javascript/rails_realtime_erd/vendor/` and, together with `application.js` (all Stimulus controllers), are served same-origin by `AssetsController` at `<mount_path>/assets/:name` (`engine_asset_path`). Only names in its frozen `ASSETS` allow-list are served (anything else returns 404). Adding a JS file means updating `ASSETS`, the layout `<script>` tags and the request spec, which asserts the three same-origin `src` URLs. Upgrading Mermaid or Stimulus means replacing the vendored file.
+
+Either way the gem works regardless of the host's asset pipeline choice (Sprockets / Propshaft / importmap / none).
 
 Seven Stimulus controllers split the work:
 
@@ -80,4 +88,5 @@ Use a non-system Ruby (rbenv/asdf). The macOS system Ruby 2.6 is a universal bin
 - UI is **English only** (no i18n) — strings are static in the ERB views.
 - The viewer must remain entirely client-side after initial page load. Don't add Turbo Frame roundtrips per checkbox — Stimulus state changes only.
 - The engine layout must remain standalone (don't `layout "application"` against the host) — host conflicts are easy to introduce and silent.
+- No CDN assets. Vendor JS and serve it through `AssetsController`, and keep CSS in `erd.css` (see Frontend).
 - The viewer is a full-viewport app shell: `#rre-app` is an `h-screen` flex column, header/footer are `flex-none`, the middle row is `flex-1 min-h-0`, the sidebar scrolls on its own (`overflow-y-auto`) and the ERD/Code panes are `flex-1 min-h-0`. The page itself must never scroll, however many models the host has. Don't reintroduce `calc(100vh - …px)` heights — they hard-code header/footer sizes and let a long model list push the page past the window. The diagram SVG is fitted inside the pane on render (`max-width`/`max-height: 100%`, never upscaled), with bottom padding on `#rre-preview` so it clears the overlaid Movement/Zoom hint bar.

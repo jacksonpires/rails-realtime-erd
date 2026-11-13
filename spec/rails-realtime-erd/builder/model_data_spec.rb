@@ -107,6 +107,36 @@ RSpec.describe RailsRealtimeErd::Builder do
         {name: "created_at", type: :datetime, sql_type: DATETIME_SQL_TYPE, key: "", comment: nil},
         {name: "updated_at", type: :datetime, sql_type: DATETIME_SQL_TYPE, key: "", comment: nil}
       ]
+    }, {
+      TableName: "bloggers",
+      TableComment: "",
+      ModelName: "Blogger",
+      IsModelExist: true,
+      Columns: [
+        {name: "id", type: :integer, sql_type: "INTEGER", key: "PK", comment: nil},
+        {name: "name", type: :string, sql_type: "varchar", key: "", comment: nil}
+      ]
+    }, {
+      TableName: "entries",
+      TableComment: "",
+      ModelName: "Entry",
+      IsModelExist: true,
+      Columns: [
+        {name: "id", type: :integer, sql_type: "INTEGER", key: "PK", comment: nil},
+        {name: "title", type: :string, sql_type: "varchar", key: "", comment: nil},
+        {name: "blogger_id", type: :integer, sql_type: "INTEGER", key: "", comment: nil}
+      ]
+    }, {
+      TableName: "notes",
+      TableComment: "",
+      ModelName: "Note",
+      IsModelExist: true,
+      Columns: [
+        {name: "id", type: :integer, sql_type: "INTEGER", key: "PK", comment: nil},
+        {name: "body", type: :string, sql_type: "varchar", key: "", comment: nil},
+        {name: "entry_id", type: :integer, sql_type: "INTEGER", key: "", comment: nil},
+        {name: "blogger_id", type: :integer, sql_type: "INTEGER", key: "", comment: nil}
+      ]
     }])
   end
 
@@ -174,6 +204,64 @@ RSpec.describe RailsRealtimeErd::Builder do
       RightModelName: "Tag",
       RightValue: "||",
       Comment: "BT:tag"
+    }, {
+      LeftModelName: "Blogger",
+      LeftValue: "}o",
+      Line: "..",
+      RightModelName: "Entry",
+      RightValue: "o{",
+      Comment: "HMT:noted_entries"
+    }, {
+      LeftModelName: "Blogger",
+      LeftValue: "|o",
+      Line: "--",
+      RightModelName: "Entry",
+      RightValue: "o{",
+      Comment: "HM:entries, BT:blogger"
+    }, {
+      LeftModelName: "Blogger",
+      LeftValue: "||",
+      Line: "--",
+      RightModelName: "Note",
+      RightValue: "o{",
+      Comment: "HM:notes, BT:blogger"
+    }, {
+      LeftModelName: "Blogger",
+      LeftValue: "}o",
+      Line: "..",
+      RightModelName: "Note",
+      RightValue: "o{",
+      Comment: "HABTM"
+    }, {
+      LeftModelName: "Note",
+      LeftValue: "}o",
+      Line: "--",
+      RightModelName: "Entry",
+      RightValue: "||",
+      Comment: "BT:entry"
     }])
+  end
+
+  # Regression: belongs_to / HABTM used to merge into the *first* edge between
+  # the pair regardless of its line style. Blogger declares its through
+  # association before the direct one, so the dotted edge came first and
+  # Entry#blogger was folded into it (also flipping its glyph to `|o`), while
+  # Note's HABTM overwrote the comment of the direct HM:notes edge.
+  describe "reverse lookup respects the edge's line style" do
+    def edges(left, right)
+      result[:Relations].select { |r| r[:LeftModelName] == left && r[:RightModelName] == right }
+    end
+
+    it "merges belongs_to into the direct edge, not an earlier through edge" do
+      through, direct = edges("Blogger", "Entry").partition { |r| r[:Line] == ".." }.map(&:first)
+      expect(through).to include(LeftValue: "}o", Comment: "HMT:noted_entries")
+      expect(direct).to include(LeftValue: "|o", Comment: "HM:entries, BT:blogger")
+    end
+
+    it "merges HABTM into the dotted HABTM edge, not an earlier direct edge" do
+      through, direct = edges("Blogger", "Note").partition { |r| r[:Line] == ".." }.map(&:first)
+      expect(through).to include(Comment: "HABTM")
+      expect(direct).to include(Comment: "HM:notes, BT:blogger")
+    end
   end
 end
